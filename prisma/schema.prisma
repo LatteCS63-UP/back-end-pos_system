@@ -139,7 +139,7 @@ model Owner {
 
 model Employee {
   EmployeeID        Int     @id @default(autoincrement())
-  EmployeeUsername  String  @unique @db.VarChar(255)
+  EmployeeUsername  String  @db.VarChar(255)
   EmployeePassword  String  @db.VarChar(255)
   EmployeeFirstname String  @db.VarChar(100)
   EmployeeLastname  String? @db.VarChar(100)
@@ -161,7 +161,7 @@ model Employee {
 
 model Customer {
   CustomerID          Int     @id @default(autoincrement())
-  CustomerUsername    String  @unique @db.VarChar(255)
+  CustomerUsername    String  @db.VarChar(255)
   CustomerPassword    String  @db.VarChar(255)
   CustomerFirstname   String  @db.VarChar(255)
   CustomerLastname    String  @db.VarChar(255)
