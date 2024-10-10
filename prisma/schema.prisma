@@ -123,6 +123,7 @@ model Owner {
   OwnerPassword   String @db.VarChar(255)
   OwnerFirst_name String @db.VarChar(100)
   OwnerLast_name  String @db.VarChar(100)
+  StatusLogin     String @db.VarChar(1)
 
   JobTitleID Int?
   ShopID     Int?
