@@ -7,13 +7,16 @@ export class RegisterService {
     constructor(private prisma: PrismaService) {}
 
     async register_shop(data: Shop): Promise<Shop> {
+        //* change field CreateDate of shop follow currentDate value.
+        const currentDate = new Date().toISOString();
 
+        //* search shop in last position 
         const lastShop = await this.prisma.shop.findFirst({
             orderBy: {
                 ShopID: 'desc'
             }
         });
-        
+
         let newId: string;
         if (lastShop) {
             const lastId = parseInt(lastShop.ShopCode, 10);
@@ -23,6 +26,7 @@ export class RegisterService {
         }
 
         data.ShopCode = newId;
+        data.CreateDate = currentDate;
 
         return await this.prisma.shop.create({
             data,
@@ -30,6 +34,8 @@ export class RegisterService {
     }
 
     async register_owner(data: Owner) {
+        const currentDate = new Date().toISOString();
+
         const username = await this.prisma.owner.findUnique({
             where: {
                 OwnerUsername: data.OwnerUsername
@@ -39,9 +45,12 @@ export class RegisterService {
         if (username) {
             return {
                 username_status: false,
-                description: 'Duplicate user, Please fill in again.'
+                description: 'Duplicate username, Please fill in again.'
             }
         }else {
+            //* change field CreateDate of owner follow currentDate value.
+            data.CreateDate = currentDate;
+
             await this.prisma.owner.create({
                 data,
             })
