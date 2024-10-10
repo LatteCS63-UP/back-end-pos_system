@@ -118,11 +118,11 @@ model SysAdmin {
 }
 
 model Owner {
-  OwnerID        Int    @id @default(autoincrement())
-  OwnerUsername  String @unique @db.VarChar(255)
-  OwnerPassword  String @db.VarChar(255)
-  OwnerFirstname String @db.VarChar(100)
-  OwnerLastname  String @db.VarChar(100)
+  OwnerID         Int    @id @default(autoincrement())
+  OwnerUsername   String @unique @db.VarChar(255)
+  OwnerPassword   String @db.VarChar(255)
+  OwnerFirst_name String @db.VarChar(100)
+  OwnerLast_name  String @db.VarChar(100)
 
   JobTitleID Int?
   ShopID     Int?

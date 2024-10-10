@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { encodePassword } from 'src/utils/bcrypt';
 import { Owner, Shop } from './register.model';
 
 @Injectable()
@@ -25,15 +26,22 @@ export class RegisterService {
             newId = '001'
         }
 
-        data.ShopCode = newId;
-        data.CreateDate = currentDate;
-
         return await this.prisma.shop.create({
-            data,
+            data: {
+                ShopCode: newId,
+                ShopName: data.ShopName,
+                ShopAddress: data.ShopAddress,
+                ProvinceID: data.ProvinceID,
+                DistrictID: data.DistrictID,
+                SubDistrictID: data.SubDistrictID,
+
+                RecordStatus: 'N',
+                CreateDate: currentDate
+            }
         })
     }
 
-    async register_owner(data: Owner) {
+    async register_owner(data: Owner, shop_code: string) {
         const currentDate = new Date().toISOString();
 
         const username = await this.prisma.owner.findUnique({
@@ -48,11 +56,30 @@ export class RegisterService {
                 description: 'Duplicate username, Please fill in again.'
             }
         }else {
-            //* change field CreateDate of owner follow currentDate value.
-            data.CreateDate = currentDate;
+            const password_encode = await encodePassword(data.OwnerPassword)
+
+            const id = await this.prisma.shop.findUnique({
+                where: {
+                    ShopCode: shop_code
+                },
+                select: {
+                    ShopID: true,
+                }
+            })
 
             await this.prisma.owner.create({
-                data,
+                data: {
+                    OwnerFirst_name: data.OwnerFirst_name,
+                    OwnerLast_name: data.OwnerLast_name,
+                    OwnerUsername: data.OwnerUsername,
+                    OwnerPassword: password_encode,
+                    JobTitleID: 1,
+                    ShopID: id.ShopID,
+
+                    RecordStatus: 'N',
+                    CreateDate: currentDate
+
+                }
             })
 
             return {

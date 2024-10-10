@@ -40,8 +40,8 @@ export class RegisterController {
     }
 
     @Post('owner')
-    async register_owner(@Body() owner: Owner): Promise<any> {
-        return await this.registerService.register_owner(owner)
+    async register_owner(@Body() owner: Owner, @Query('Shop_code') shop_code: string): Promise<any> {
+        return await this.registerService.register_owner(owner, shop_code)
         // console.log(owner)
 
     }

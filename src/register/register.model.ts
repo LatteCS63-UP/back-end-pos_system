@@ -20,8 +20,11 @@ export class Shop implements Prisma.ShopCreateInput {
 export class Owner implements Prisma.OwnerCreateInput {
     OwnerUsername: string;
     OwnerPassword: string;
-    OwnerFirstname: string;
-    OwnerLastname: string;
+    OwnerFirst_name: string;
+    OwnerLast_name: string;
+
+    JobTitleID: number;
+    ShopID: number;
 
     RecordStatus?: string;
     CreateDate?: string | Date;
