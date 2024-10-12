@@ -22,6 +22,7 @@ export class Owner implements Prisma.OwnerCreateInput {
     OwnerPassword: string;
     OwnerFirst_name: string;
     OwnerLast_name: string;
+    StatusLogin: string;
 
     JobTitleID: number;
     ShopID: number;

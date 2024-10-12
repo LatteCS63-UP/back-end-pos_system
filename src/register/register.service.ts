@@ -44,48 +44,36 @@ export class RegisterService {
     async register_owner(data: Owner, shop_code: string) {
         const currentDate = new Date().toISOString();
 
-        const username = await this.prisma.owner.findUnique({
+        const password_encode = await encodePassword(data.OwnerPassword)
+
+        const id = await this.prisma.shop.findUnique({
             where: {
-                OwnerUsername: data.OwnerUsername
+                ShopCode: shop_code
+            },
+            select: {
+                ShopID: true,
             }
         })
 
-        if (username) {
-            return {
-                username_status: false,
-                description: 'Duplicate username, Please fill in again.'
+        await this.prisma.owner.create({
+            data: {
+                OwnerFirst_name: data.OwnerFirst_name,
+                OwnerLast_name: data.OwnerLast_name,
+                OwnerUsername: data.OwnerUsername,
+                OwnerPassword: password_encode,
+                StatusLogin: 'W',
+                JobTitleID: 1,
+                ShopID: id.ShopID,
+
+                RecordStatus: 'N',
+                CreateDate: currentDate
+
             }
-        }else {
-            const password_encode = await encodePassword(data.OwnerPassword)
+        })
 
-            const id = await this.prisma.shop.findUnique({
-                where: {
-                    ShopCode: shop_code
-                },
-                select: {
-                    ShopID: true,
-                }
-            })
-
-            await this.prisma.owner.create({
-                data: {
-                    OwnerFirst_name: data.OwnerFirst_name,
-                    OwnerLast_name: data.OwnerLast_name,
-                    OwnerUsername: data.OwnerUsername,
-                    OwnerPassword: password_encode,
-                    JobTitleID: 1,
-                    ShopID: id.ShopID,
-
-                    RecordStatus: 'N',
-                    CreateDate: currentDate
-
-                }
-            })
-
-            return {
-                username_status: true,
-                description: 'Register success.',
-            }
+        return {
+            username_status: true,
+            description: 'Register success.',
         }
     }
 }

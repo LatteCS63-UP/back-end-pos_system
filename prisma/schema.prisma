@@ -1,11 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -14,318 +9,342 @@ datasource db {
 }
 
 model MasProvince {
-  ProvinceID     Int     @id
-  ProvinceNameTh String  @unique @db.VarChar(255)
-  ProvinceNameEn String? @unique @db.VarChar(255)
-
-  RecordStatus String?       @db.VarChar(1)
-  CreateDate   DateTime?     @db.DateTime
-  CreateUser   String?       @db.VarChar(10)
-  LastDate     DateTime?     @db.DateTime
-  LastUser     String?       @db.VarChar(10)
-  MasDistrict  MasDistrict[]
-  Shop         Shop[]
-}
-
-model MasDistrict {
-  DistrictID     Int     @id
-  DistrictNameTh String  @db.VarChar(255)
-  DistrictNameEn String? @db.VarChar(255)
-
-  ProvinceID  Int?
-  DistrictFK1 MasProvince? @relation(fields: [ProvinceID], references: [ProvinceID])
-
-  RecordStatus   String?          @db.VarChar(1)
-  CreateDate     DateTime?        @db.DateTime
-  CreateUser     String?          @db.VarChar(10)
-  LastDate       DateTime?        @db.DateTime
-  LastUser       String?          @db.VarChar(10)
-  MasSubDistrict MasSubDistrict[]
+  ProvinceID     Int           @id
+  ProvinceNameTh String        @unique @db.VarChar(255)
+  ProvinceNameEn String?       @unique @db.VarChar(255)
+  RecordStatus   String?       @db.VarChar(1)
+  CreateDate     DateTime?     @db.DateTime(0)
+  CreateUser     String?       @db.VarChar(10)
+  LastDate       DateTime?     @db.DateTime(0)
+  LastUser       String?       @db.VarChar(10)
+  MasDistrict    MasDistrict[]
   Shop           Shop[]
 }
 
+model MasDistrict {
+  DistrictID     Int              @id
+  DistrictNameTh String           @db.VarChar(255)
+  DistrictNameEn String?          @db.VarChar(255)
+  ProvinceID     Int
+  RecordStatus   String?          @db.VarChar(1)
+  CreateDate     DateTime?        @db.DateTime(0)
+  CreateUser     String?          @db.VarChar(10)
+  LastDate       DateTime?        @db.DateTime(0)
+  LastUser       String?          @db.VarChar(10)
+  DistrictFK1    MasProvince?     @relation(fields: [ProvinceID], references: [ProvinceID])
+  MasSubDistrict MasSubDistrict[]
+  Shop           Shop[]
+
+  @@index([ProvinceID], map: "MasDistrict_ProvinceID_fkey")
+}
+
 model MasSubDistrict {
-  SubDistrictID     Int     @id
-  SubDistrictNameTh String  @db.VarChar(255)
-  SubDistrictNameEn String? @db.VarChar(255)
+  SubDistrictID     Int          @id
+  SubDistrictNameTh String       @db.VarChar(255)
+  SubDistrictNameEn String?      @db.VarChar(255)
+  DistrictID        Int
+  RecordStatus      String?      @db.VarChar(1)
+  CreateDate        DateTime?    @db.DateTime(0)
+  CreateUser        String?      @db.VarChar(10)
+  LastDate          DateTime?    @db.DateTime(0)
+  LastUser          String?      @db.VarChar(10)
+  SubDistrictFK1    MasDistrict? @relation(fields: [DistrictID], references: [DistrictID])
+  Shop              Shop[]
 
-  DistrictID     Int?
-  SubDistrictFK1 MasDistrict? @relation(fields: [DistrictID], references: [DistrictID])
-
-  RecordStatus String?   @db.VarChar(1)
-  CreateDate   DateTime? @db.DateTime
-  CreateUser   String?   @db.VarChar(10)
-  LastDate     DateTime? @db.DateTime
-  LastUser     String?   @db.VarChar(10)
-  Shop         Shop[]
+  @@index([DistrictID], map: "MasSubDistrict_DistrictID_fkey")
 }
 
 model MasJobTitle {
-  JobTitleID   Int    @id @default(autoincrement())
-  JobTitleName String @unique @db.VarChar(255)
-
-  RecordStatus String?   @db.VarChar(1)
-  CreateDate   DateTime? @db.DateTime
-  CreateUser   String?   @db.VarChar(10)
-  LastDate     DateTime? @db.DateTime
-  LastUser     String?   @db.VarChar(10)
-
-  SysAdmin SysAdmin[]
-  Owner    Owner[]
-  Employee Employee[]
+  JobTitleID   Int        @id @default(autoincrement())
+  JobTitleName String     @unique @db.VarChar(255)
+  RecordStatus String?    @db.VarChar(1)
+  CreateDate   DateTime?  @db.DateTime(0)
+  CreateUser   String?    @db.VarChar(10)
+  LastDate     DateTime?  @db.DateTime(0)
+  LastUser     String?    @db.VarChar(10)
+  Employee     Employee[]
+  Owner        Owner[]
+  SysAdmin     SysAdmin[]
 }
 
 model Shop {
-  ShopID      Int    @id @default(autoincrement())
-  ShopCode    String @unique @db.VarChar(255)
-  ShopName    String @db.VarChar(255)
-  ShopAddress String @db.VarChar(255)
-
+  ShopID        Int             @id @default(autoincrement())
+  ShopCode      String          @unique @db.VarChar(255)
+  ShopName      String          @db.VarChar(255)
+  ShopAddress   String          @db.VarChar(255)
   ProvinceID    Int
   DistrictID    Int
   SubDistrictID Int
-  ShopFK1       MasProvince?    @relation(fields: [ProvinceID], references: [ProvinceID])
+  RecordStatus  String?         @db.VarChar(1)
+  CreateDate    DateTime?       @db.DateTime(0)
+  CreateUser    String?         @db.VarChar(10)
+  LastDate      DateTime?       @db.DateTime(0)
+  LastUser      String?         @db.VarChar(10)
+  Customer      Customer[]
+  Employee      Employee[]
+  Owner         Owner[]
   ShopFK2       MasDistrict?    @relation(fields: [DistrictID], references: [DistrictID])
+  ShopFK1       MasProvince?    @relation(fields: [ProvinceID], references: [ProvinceID])
   ShopFK3       MasSubDistrict? @relation(fields: [SubDistrictID], references: [SubDistrictID])
 
-  RecordStatus String?   @db.VarChar(1)
-  CreateDate   DateTime? @db.DateTime
-  CreateUser   String?   @db.VarChar(10)
-  LastDate     DateTime? @db.DateTime
-  LastUser     String?   @db.VarChar(10)
-
-  Owner    Owner[]
-  Employee Employee[]
-  Customer Customer[]
+  @@index([DistrictID], map: "Shop_DistrictID_fkey")
+  @@index([ProvinceID], map: "Shop_ProvinceID_fkey")
+  @@index([SubDistrictID], map: "Shop_SubDistrictID_fkey")
 }
 
 model SysAdmin {
-  SysAdminID Int @id @default(autoincrement())
+  SysAdminID        Int          @id @default(autoincrement())
+  JobTitleID        Int
+  SysAdminUsername  String       @unique @db.VarChar(255)
+  SysAdminPassword  String       @db.VarChar(255)
+  SysAdminFirstname String       @db.VarChar(255)
+  SysAdminLastname  String       @db.VarChar(255)
+  RecordStatus      String?      @db.VarChar(1)
+  CreateDate        DateTime?    @db.DateTime(0)
+  CreateUser        String?      @db.VarChar(10)
+  LastDate          DateTime?    @db.DateTime(0)
+  LastUser          String?      @db.VarChar(10)
+  SysAdminFK1       MasJobTitle? @relation(fields: [JobTitleID], references: [JobTitleID])
 
-  JobTitleID  Int?
-  SysAdminFK1 MasJobTitle? @relation(fields: [JobTitleID], references: [JobTitleID])
-
-  SysAdminUsername  String @unique @db.VarChar(255)
-  SysAdminPassword  String @db.VarChar(255)
-  SysAdminFirstname String @db.VarChar(255)
-  SysAdminLastname  String @db.VarChar(255)
-
-  RecordStatus String    @db.VarChar(1)
-  CreateDate   DateTime  @db.DateTime
-  CreateUser   String    @db.VarChar(10)
-  LastDate     DateTime? @db.DateTime
-  LastUser     String?   @db.VarChar(10)
+  @@index([JobTitleID], map: "SysAdmin_JobTitleID_fkey")
 }
 
 model Owner {
-  OwnerID         Int    @id @default(autoincrement())
-  OwnerUsername   String @unique @db.VarChar(255)
-  OwnerPassword   String @db.VarChar(255)
-  OwnerFirst_name String @db.VarChar(100)
-  OwnerLast_name  String @db.VarChar(100)
-  StatusLogin     String @db.VarChar(1)
+  OwnerID         Int          @id @default(autoincrement())
+  OwnerUsername   String       @db.VarChar(255)
+  OwnerPassword   String       @db.VarChar(255)
+  JobTitleID      Int
+  ShopID          Int
+  RecordStatus    String?      @db.VarChar(1)
+  CreateDate      DateTime?    @db.DateTime(0)
+  CreateUser      String?      @db.VarChar(10)
+  LastDate        DateTime?    @db.DateTime(0)
+  LastUser        String?      @db.VarChar(10)
+  OwnerFirst_name String       @db.VarChar(100)
+  OwnerLast_name  String       @db.VarChar(100)
+  StatusLogin     String       @db.VarChar(1)
+  OwnerFK1        MasJobTitle? @relation(fields: [JobTitleID], references: [JobTitleID])
+  OwnerFK2        Shop?        @relation(fields: [ShopID], references: [ShopID])
 
-  JobTitleID Int?
-  ShopID     Int?
-  OwnerFK1   MasJobTitle? @relation(fields: [JobTitleID], references: [JobTitleID])
-  OwnerFK2   Shop?        @relation(fields: [ShopID], references: [ShopID])
-
-  RecordStatus String?   @db.VarChar(1)
-  CreateDate   DateTime? @db.DateTime
-  CreateUser   String?   @db.VarChar(10)
-  LastDate     DateTime? @db.DateTime
-  LastUser     String?   @db.VarChar(10)
+  @@index([JobTitleID], map: "Owner_JobTitleID_fkey")
+  @@index([ShopID], map: "Owner_ShopID_fkey")
 }
 
 model Employee {
-  EmployeeID        Int     @id @default(autoincrement())
-  EmployeeUsername  String  @db.VarChar(255)
-  EmployeePassword  String  @db.VarChar(255)
-  EmployeeFirstname String  @db.VarChar(100)
-  EmployeeLastname  String? @db.VarChar(100)
-
-  JobTitleID  Int?
-  ShopID      Int?
-  EmployeeFK1 MasJobTitle? @relation(fields: [JobTitleID], references: [JobTitleID])
-  EmployeeFK2 Shop?        @relation(fields: [ShopID], references: [ShopID])
-
-  RecordStatus        String                @db.VarChar(1)
-  CreateDate          DateTime              @db.DateTime
-  CreateUser          String                @db.VarChar(10)
-  LastDate            DateTime?             @db.DateTime
+  EmployeeID          Int                   @id @default(autoincrement())
+  EmployeeUsername    String                @db.VarChar(255)
+  EmployeePassword    String                @db.VarChar(255)
+  JobTitleID          Int
+  ShopID              Int
+  RecordStatus        String?               @db.VarChar(1)
+  CreateDate          DateTime?             @db.DateTime(0)
+  CreateUser          String?               @db.VarChar(10)
+  LastDate            DateTime?             @db.DateTime(0)
   LastUser            String?               @db.VarChar(10)
+  EmployeeFirst_name  String                @db.VarChar(100)
+  EmployeeLast_name   String                @db.VarChar(100)
   BillProductExchange BillProductExchange[]
-  ListOrderRequest    ListOrderRequest[]
+  EmployeeFK1         MasJobTitle?          @relation(fields: [JobTitleID], references: [JobTitleID])
+  EmployeeFK2         Shop?                 @relation(fields: [ShopID], references: [ShopID])
   ListOrder           ListOrder[]
+  ListOrderRequest    ListOrderRequest[]
+
+  @@index([JobTitleID], map: "Employee_JobTitleID_fkey")
+  @@index([ShopID], map: "Employee_ShopID_fkey")
 }
 
 model Customer {
-  CustomerID          Int     @id @default(autoincrement())
-  CustomerUsername    String  @db.VarChar(255)
-  CustomerPassword    String  @db.VarChar(255)
-  CustomerFirstname   String  @db.VarChar(255)
-  CustomerLastname    String  @db.VarChar(255)
-  CustomerPhoneNumber String? @db.VarChar(80)
-  CustomerPoint       Int
-  PositionCode        String  @db.VarChar(255)
-
-  ShopID      Int?
-  CustomerFK1 Shop? @relation(fields: [ShopID], references: [ShopID])
-
-  RecordStatus        String                @db.VarChar(1)
-  CreateDate          DateTime              @db.DateTime
-  CreateUser          String                @db.VarChar(10)
-  LastDate            DateTime?             @db.DateTime
+  CustomerID          Int                   @id @default(autoincrement())
+  CustomerUsername    String                @db.VarChar(255)
+  CustomerPassword    String                @db.VarChar(255)
+  CustomerFirstname   String                @db.VarChar(255)
+  CustomerLastname    String                @db.VarChar(255)
+  CustomerPhoneNumber String?               @db.VarChar(80)
+  CustomerPoint       Int?
+  PositionCode        String?               @db.VarChar(255)
+  ShopID              Int
+  RecordStatus        String?               @db.VarChar(1)
+  CreateDate          DateTime?             @db.DateTime(0)
+  CreateUser          String?               @db.VarChar(10)
+  LastDate            DateTime?             @db.DateTime(0)
   LastUser            String?               @db.VarChar(10)
-  BillProductExchange BillProductExchange[]
-  ListOrderRequest    ListOrderRequest[]
   Bill                Bill[]
+  BillProductExchange BillProductExchange[]
+  CustomerFK1         Shop?                 @relation(fields: [ShopID], references: [ShopID])
+  ListOrderRequest    ListOrderRequest[]
+
+  @@index([ShopID], map: "Customer_ShopID_fkey")
 }
 
 model BillProductExchange {
-  BillProductExchangeID Int @id @default(autoincrement())
+  BillProductExchangeID    Int                   @id @default(autoincrement())
+  EmployeeID               Int
+  CustomerID               Int
+  RecordStatus             String?               @db.VarChar(1)
+  CreateDate               DateTime?             @db.DateTime(0)
+  CreateUser               String?               @db.VarChar(10)
+  LastDate                 DateTime?             @db.DateTime(0)
+  LastUser                 String?               @db.VarChar(10)
+  BillProductExchangeCusFK Customer?             @relation(fields: [CustomerID], references: [CustomerID])
+  BillProductExchangeEmFK  Employee?             @relation(fields: [EmployeeID], references: [EmployeeID])
+  ListProductExchange      ListProductExchange[]
 
-  EmployeeID               Int?
-  CustomerID               Int?
-  BillProductExchangeEmFK  Employee? @relation(fields: [EmployeeID], references: [EmployeeID])
-  BillProductExchangeCusFK Customer? @relation(fields: [CustomerID], references: [CustomerID])
-
-  RecordStatus        String                @db.VarChar(1)
-  CreateDate          DateTime              @db.DateTime
-  CreateUser          String                @db.VarChar(10)
-  LastDate            DateTime?             @db.DateTime
-  LastUser            String?               @db.VarChar(10)
-  ListProductExchange ListProductExchange[]
+  @@index([CustomerID], map: "BillProductExchange_CustomerID_fkey")
+  @@index([EmployeeID], map: "BillProductExchange_EmployeeID_fkey")
 }
 
 model ListProductExchange {
   ProductExchangeID      Int
   BillProductExchangeID  Int
-  ListProductExchangeFK1 ProductExchange?     @relation(fields: [ProductExchangeID], references: [ProductExchangeID])
+  ProductExchangeCount   Int
+  TotalScore             Int
+  RecordStatus           String?              @db.VarChar(1)
+  CreateDate             DateTime?            @db.DateTime(0)
+  CreateUser             String?              @db.VarChar(10)
+  LastDate               DateTime?            @db.DateTime(0)
+  LastUser               String?              @db.VarChar(10)
   ListProductExchangeFK2 BillProductExchange? @relation(fields: [BillProductExchangeID], references: [BillProductExchangeID])
-
-  ProductExchangeCount Int
-  TotalScore           Int
-
-  RecordStatus String    @db.VarChar(1)
-  CreateDate   DateTime  @db.DateTime
-  CreateUser   String    @db.VarChar(10)
-  LastDate     DateTime? @db.DateTime
-  LastUser     String?   @db.VarChar(10)
+  ListProductExchangeFK1 ProductExchange?     @relation(fields: [ProductExchangeID], references: [ProductExchangeID])
 
   @@id([ProductExchangeID, BillProductExchangeID])
+  @@index([BillProductExchangeID], map: "ListProductExchange_BillProductExchangeID_fkey")
 }
 
 model ProductExchange {
-  ProductExchangeID   Int    @id @default(autoincrement())
-  ProductExchangeCode String @db.VarChar(255)
-  ProductExchangeName String @unique @db.VarChar(255)
+  ProductExchangeID   Int                   @id @default(autoincrement())
+  ProductExchangeCode String                @db.VarChar(255)
+  ProductExchangeName String                @unique @db.VarChar(255)
   ScorePoint          Int
-  ProductExchangeImg  String @db.VarChar(255)
-
-  RecordStatus        String                @db.VarChar(1)
-  CreateDate          DateTime              @db.DateTime
-  CreateUser          String                @db.VarChar(10)
-  LastDate            DateTime?             @db.DateTime
+  ProductExchangeImg  String                @db.VarChar(255)
+  RecordStatus        String?               @db.VarChar(1)
+  CreateDate          DateTime?             @db.DateTime(0)
+  CreateUser          String?               @db.VarChar(10)
+  LastDate            DateTime?             @db.DateTime(0)
   LastUser            String?               @db.VarChar(10)
   ListProductExchange ListProductExchange[]
 }
 
 model ListOrderRequest {
-  OrderRequestID     Int    @id @default(autoincrement())
-  OrderRequestStatus String @db.VarChar(10)
+  OrderRequestID      Int            @id @default(autoincrement())
+  OrderRequestStatus  String         @db.VarChar(10)
+  CustomerID          Int
+  EmployeeID          Int
+  RecordStatus        String?        @db.VarChar(1)
+  CreateDate          DateTime?      @db.DateTime(0)
+  CreateUser          String?        @db.VarChar(10)
+  LastDate            DateTime?      @db.DateTime(0)
+  LastUser            String?        @db.VarChar(10)
+  ListOrderRequestFK1 Customer?      @relation(fields: [CustomerID], references: [CustomerID])
+  ListOrderRequestFK2 Employee?      @relation(fields: [EmployeeID], references: [EmployeeID])
+  OrderRequest        OrderRequest[]
 
-  CustomerID          Int?
-  EmployeeID          Int?
-  ListOrderRequestFK1 Customer? @relation(fields: [CustomerID], references: [CustomerID])
-  ListOrderRequestFK2 Employee? @relation(fields: [EmployeeID], references: [EmployeeID])
-
-  RecordStatus String         @db.VarChar(1)
-  CreateDate   DateTime       @db.DateTime
-  CreateUser   String         @db.VarChar(10)
-  LastDate     DateTime?      @db.DateTime
-  LastUser     String?        @db.VarChar(10)
-  OrderRequest OrderRequest[]
+  @@index([CustomerID], map: "ListOrderRequest_CustomerID_fkey")
+  @@index([EmployeeID], map: "ListOrderRequest_EmployeeID_fkey")
 }
 
 model OrderRequest {
   OrderRequestID  Int
   ProductID       Int
-  OrderRequestFK1 ListOrderRequest @relation(fields: [OrderRequestID], references: [OrderRequestID])
-  OrderRequestFK2 Product          @relation(fields: [ProductID], references: [ProductID])
-
-  ProductCount Int
-
-  RecordStatus String    @db.VarChar(1)
-  CreateDate   DateTime  @db.DateTime
-  CreateUser   String    @db.VarChar(10)
-  LastDate     DateTime? @db.DateTime
-  LastUser     String?   @db.VarChar(10)
+  ProductCount    Int
+  RecordStatus    String?           @db.VarChar(1)
+  CreateDate      DateTime?         @db.DateTime(0)
+  CreateUser      String?           @db.VarChar(10)
+  LastDate        DateTime?         @db.DateTime(0)
+  LastUser        String?           @db.VarChar(10)
+  OrderRequestFK1 ListOrderRequest? @relation(fields: [OrderRequestID], references: [OrderRequestID])
+  OrderRequestFK2 Product?          @relation(fields: [ProductID], references: [ProductID])
 
   @@id([OrderRequestID, ProductID])
+  @@index([ProductID], map: "OrderRequest_ProductID_fkey")
 }
 
 model Product {
-  ProductID    Int    @id @default(autoincrement())
-  ProductCode  String @db.VarChar(255)
-  ProductName  String @unique @db.VarChar(255)
+  ProductID    Int            @id @default(autoincrement())
+  ProductCode  String         @db.VarChar(255)
+  ProductName  String         @unique @db.VarChar(255)
   ProductPrice Int
-  ProductImg   String @db.VarChar(255)
-
-  RecordStatus String         @db.VarChar(1)
-  CreateDate   DateTime       @db.DateTime
-  CreateUser   String         @db.VarChar(10)
-  LastDate     DateTime?      @db.DateTime
+  ProductImg   String         @db.VarChar(255)
+  RecordStatus String?        @db.VarChar(1)
+  CreateDate   DateTime?      @db.DateTime(0)
+  CreateUser   String?        @db.VarChar(10)
+  LastDate     DateTime?      @db.DateTime(0)
   LastUser     String?        @db.VarChar(10)
   OrderExport  OrderExport[]
   OrderRequest OrderRequest[]
 }
 
 model ListOrder {
-  OrderID Int @id @default(autoincrement())
-
-  EmployeeID   Int?
-  ListOrderFK1 Employee? @relation(fields: [EmployeeID], references: [EmployeeID])
-
-  RecordStatus String        @db.VarChar(1)
-  CreateDate   DateTime      @db.DateTime
-  CreateUser   String        @db.VarChar(10)
-  LastDate     DateTime?     @db.DateTime
+  OrderID      Int           @id @default(autoincrement())
+  EmployeeID   Int
+  RecordStatus String?       @db.VarChar(1)
+  CreateDate   DateTime?     @db.DateTime(0)
+  CreateUser   String?       @db.VarChar(10)
+  LastDate     DateTime?     @db.DateTime(0)
   LastUser     String?       @db.VarChar(10)
+  ListOrderFK1 Employee?     @relation(fields: [EmployeeID], references: [EmployeeID])
   OrderExport  OrderExport[]
+
+  @@index([EmployeeID], map: "ListOrder_EmployeeID_fkey")
 }
 
 model Bill {
-  BillID  Int    @id @default(autoincrement())
-  PayType String @db.VarChar(100)
-
-  CustomerID Int?
-  BillFK1    Customer? @relation(fields: [CustomerID], references: [CustomerID])
-
-  RecordStatus String        @db.VarChar(1)
-  CreateDate   DateTime      @db.DateTime
-  CreateUser   String        @db.VarChar(10)
-  LastDate     DateTime?     @db.DateTime
+  BillID       Int           @id @default(autoincrement())
+  PayType      String        @db.VarChar(100)
+  CustomerID   Int
+  RecordStatus String?       @db.VarChar(1)
+  CreateDate   DateTime?     @db.DateTime(0)
+  CreateUser   String?       @db.VarChar(10)
+  LastDate     DateTime?     @db.DateTime(0)
   LastUser     String?       @db.VarChar(10)
+  BillFK1      Customer?     @relation(fields: [CustomerID], references: [CustomerID])
   OrderExport  OrderExport[]
+
+  @@index([CustomerID], map: "Bill_CustomerID_fkey")
 }
 
 model OrderExport {
   BillID         Int
   ProductID      Int
-  OrderExportFK1 Bill?    @relation(fields: [BillID], references: [BillID])
-  OrderExportFK2 Product? @relation(fields: [ProductID], references: [ProductID])
-
-  OrderID        Int?
+  OrderID        Int
+  ProductCount   Int
+  RecordStatus   String?    @db.VarChar(1)
+  CreateDate     DateTime?  @db.DateTime(0)
+  CreateUser     String?    @db.VarChar(10)
+  LastDate       DateTime?  @db.DateTime(0)
+  LastUser       String?    @db.VarChar(10)
+  OrderExportFK1 Bill?      @relation(fields: [BillID], references: [BillID])
   OrderExportFK3 ListOrder? @relation(fields: [OrderID], references: [OrderID])
-
-  ProductCount Int
-
-  RecordStatus String    @db.VarChar(1)
-  CreateDate   DateTime  @db.DateTime
-  CreateUser   String    @db.VarChar(10)
-  LastDate     DateTime? @db.DateTime
-  LastUser     String?   @db.VarChar(10)
+  OrderExportFK2 Product?   @relation(fields: [ProductID], references: [ProductID])
 
   @@id([BillID, ProductID])
+  @@index([OrderID], map: "OrderExport_OrderID_fkey")
+  @@index([ProductID], map: "OrderExport_ProductID_fkey")
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Profile_employee {
+  EmployeeID         Int     @unique @default(0)
+  EmployeeFirst_name String  @db.VarChar(100)
+  EmployeeLast_name  String  @db.VarChar(100)
+  JobTitleName       String? @db.VarChar(255)
+  ShopCode           String? @db.VarChar(255)
+  ShopName           String? @db.VarChar(255)
+  ShopAddress        String? @db.VarChar(255)
+  ProvinceNameTh     String? @db.VarChar(255)
+  DistrictNameTh     String? @db.VarChar(255)
+  SubDistrictNameTh  String? @db.VarChar(255)
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view Profile_owner {
+  OwnerID           Int     @unique @default(0)
+  OwnerFirst_name   String  @db.VarChar(100)
+  OwnerLast_name    String  @db.VarChar(100)
+  JobTitleName      String? @db.VarChar(255)
+  ShopCode          String? @db.VarChar(255)
+  ShopName          String? @db.VarChar(255)
+  ShopAddress       String? @db.VarChar(255)
+  ProvinceNameTh    String? @db.VarChar(255)
+  DistrictNameTh    String? @db.VarChar(255)
+  SubDistrictNameTh String? @db.VarChar(255)
 }
