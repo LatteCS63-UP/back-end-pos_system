@@ -148,6 +148,7 @@ model Employee {
   EmployeeFK2         Shop?                 @relation(fields: [ShopID], references: [ShopID])
   ListOrder           ListOrder[]
   ListOrderRequest    ListOrderRequest[]
+  Statement           Statement[]
 
   @@index([JobTitleID], map: "Employee_JobTitleID_fkey")
   @@index([ShopID], map: "Employee_ShopID_fkey")
@@ -300,6 +301,20 @@ model Bill {
   OrderExport  OrderExport[]
 
   @@index([CustomerID], map: "Bill_CustomerID_fkey")
+}
+
+model Statement {
+  StatementID  Int       @id @default(autoincrement())
+  EmployeeID   Int
+  State_on     DateTime
+  State_off    DateTime
+  Change       Int
+  RecordStatus String?   @db.VarChar(1)
+  CreateDate   DateTime? @db.DateTime(0)
+  CreateUser   String?   @db.VarChar(10)
+  LastDate     DateTime? @db.DateTime(0)
+  LastUser     String?   @db.VarChar(10)
+  StatementFK1 Employee? @relation(fields: [EmployeeID], references: [EmployeeID])
 }
 
 model OrderExport {
