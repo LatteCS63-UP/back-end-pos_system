@@ -16,33 +16,28 @@ export class SignInService {
 
         const id = await this.prisma.shop.findUnique({
             where: {
-                ShopCode: code,
-
-            },
-            select: {
-                ShopID: true, 
-
+                Shop_code: code,
             }
         });
 
         if(id) {
-            const owner = await this.prisma.owner.findFirst({
+            const owner = await this.prisma.owner_detail.findFirst({
                 where: {
-                    ShopID: id.ShopID,
-                    OwnerUsername: username
+                    Shop_code: code,
+                    Owner_username: username
                 },
                 select: {
-                    ShopID: true,
+                    Shop_code: true,
                     OwnerID: true,
-                    JobTitleID: true,
+                    JobTitle_name: true,
                     StatusLogin: true,
     
-                    OwnerPassword: true
+                    Owner_password: true
                 }
             });
 
             if(owner) {
-                const matched = await comparePassword(password, owner.OwnerPassword)
+                const matched = await comparePassword(password, owner.Owner_password)
 
                 if(matched) {
                     return {
@@ -50,10 +45,11 @@ export class SignInService {
                         username: true,
                         password: matched,
                         user: {
-                            shop_id: owner.ShopID,
-                            owner_id: owner.OwnerID,
-                            job_title_id: owner.JobTitleID,
-                            status_login: owner.StatusLogin
+                            id: owner.OwnerID,
+                            job_title_name: owner.JobTitle_name,
+                            status_login: owner.StatusLogin,
+
+                            shop_code: owner.Shop_code,
                         }
                     }
                 }else {
@@ -65,22 +61,22 @@ export class SignInService {
                 }
 
             }else {
-                const employee = await this.prisma.employee.findFirst({
+                const employee = await this.prisma.employee_detail.findFirst({
                     where: {
-                        EmployeeUsername: username,
-                        ShopID: id.ShopID
+                        Employee_username: username,
+                        Shop_code: code
                     },
                     select: {
-                        ShopID: true,
+                        Shop_code: true,
                         EmployeeID: true,
-                        JobTitleID: true,
+                        JobTitle_name: true,
 
-                        EmployeePassword: true,
+                        Employee_password: true,
                     }
                 })
 
                 if(employee) {
-                    const matched = await comparePassword(password, employee.EmployeePassword)
+                    const matched = await comparePassword(password, employee.Employee_password)
 
                     if(matched) {
                         return {
@@ -88,9 +84,9 @@ export class SignInService {
                             username: true,
                             password: matched,
                             user: {
-                                shop_id: employee.ShopID,
-                                employee_id: employee.EmployeeID,
-                                job_title_id: employee.JobTitleID,
+                                shop_code: employee.Shop_code,
+                                id: employee.EmployeeID,
+                                job_title_name: employee.JobTitle_name,
                             }
                         }
                     }else {

@@ -20,7 +20,7 @@ export class RegisterService {
 
         let newId: string;
         if (lastShop) {
-            const lastId = parseInt(lastShop.ShopCode, 10);
+            const lastId = parseInt(lastShop.Shop_code, 10);
             newId = (lastId + 1).toString().padStart(3, '0');
         } else {
             newId = '001'
@@ -28,9 +28,9 @@ export class RegisterService {
 
         return await this.prisma.shop.create({
             data: {
-                ShopCode: newId,
-                ShopName: data.ShopName,
-                ShopAddress: data.ShopAddress,
+                Shop_code: newId,
+                Shop_name: data.Shop_name,
+                Shop_address: data.Shop_address,
                 ProvinceID: data.ProvinceID,
                 DistrictID: data.DistrictID,
                 SubDistrictID: data.SubDistrictID,
@@ -44,11 +44,11 @@ export class RegisterService {
     async register_owner(data: Owner, shop_code: string) {
         const currentDate = new Date().toISOString();
 
-        const password_encode = await encodePassword(data.OwnerPassword)
+        const password_encode = await encodePassword(data.Owner_password)
 
         const id = await this.prisma.shop.findUnique({
             where: {
-                ShopCode: shop_code
+                Shop_code: shop_code
             },
             select: {
                 ShopID: true,
@@ -57,10 +57,10 @@ export class RegisterService {
 
         await this.prisma.owner.create({
             data: {
-                OwnerFirst_name: data.OwnerFirst_name,
-                OwnerLast_name: data.OwnerLast_name,
-                OwnerUsername: data.OwnerUsername,
-                OwnerPassword: password_encode,
+                Owner_first_name: data.Owner_first_name,
+                Owner_last_name: data.Owner_last_name,
+                Owner_username: data.Owner_username,
+                Owner_password: password_encode,
                 StatusLogin: 'W',
                 JobTitleID: 1,
                 ShopID: id.ShopID,

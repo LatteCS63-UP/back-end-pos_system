@@ -54,7 +54,7 @@ export class GroupService {
         return await this.prisma.masJobTitle.findMany({
             select: {
                 JobTitleID: true,
-                JobTitleName: true
+                JobTitle_name: true
             }
         })
     }
