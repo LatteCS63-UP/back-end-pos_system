@@ -24,5 +24,5 @@ export class MasSubDistrict implements Prisma.MasSubDistrictCreateInput {
 
 export class MasJobTitle implements Prisma.MasJobTitleCreateInput {
     JobTitleID: number;
-    JobTitleName: string;
+    JobTitle_name: string;
 }

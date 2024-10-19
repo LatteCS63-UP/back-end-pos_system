@@ -1,9 +1,9 @@
 import { Prisma } from "@prisma/client";
 
 export class Shop implements Prisma.ShopCreateInput {
-    ShopCode: string;
-    ShopName: string;
-    ShopAddress: string;
+    Shop_code: string;
+    Shop_name: string;
+    Shop_address: string;
 
     ProvinceID: number;
     DistrictID: number;
@@ -18,10 +18,10 @@ export class Shop implements Prisma.ShopCreateInput {
 }
 
 export class Owner implements Prisma.OwnerCreateInput {
-    OwnerUsername: string;
-    OwnerPassword: string;
-    OwnerFirst_name: string;
-    OwnerLast_name: string;
+    Owner_username: string;
+    Owner_password: string;
+    Owner_first_name: string;
+    Owner_last_name: string;
     StatusLogin: string;
 
     JobTitleID: number;

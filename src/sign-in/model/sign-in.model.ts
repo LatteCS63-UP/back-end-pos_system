@@ -1,10 +1,10 @@
 import { Prisma } from "@prisma/client";
 
 export class Owner implements Prisma.OwnerCreateInput {
-    OwnerFirst_name: string;
-    OwnerLast_name: string;
-    OwnerUsername: string;
-    OwnerPassword: string;
+    Owner_first_name: string;
+    Owner_last_name: string;
+    Owner_username: string;
+    Owner_password: string;
     StatusLogin: string;
 
     RecordStatus: string;
